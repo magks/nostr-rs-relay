@@ -1,3 +1,4 @@
+/*
 use crate::db::QueryResult;
 use crate::error::Result;
 use crate::event::{single_char_tagname, Event};
@@ -1013,3 +1014,4 @@ mod tests {
         assert!(query_from_filter(&filter).is_none());
     }
 }
+*/

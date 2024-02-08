@@ -44,8 +44,8 @@ pub enum Processor {
 }
 
 /// Possible states of an invoice
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, sqlx::Type)]
-#[sqlx(type_name = "status")]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq/*, sqlx::Type*/)]
+//#[sqlx(type_name = "status")]
 pub enum InvoiceStatus {
     Unpaid,
     Paid,

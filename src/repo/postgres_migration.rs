@@ -1,3 +1,4 @@
+/*
 use crate::repo::postgres::PostgresPool;
 use async_trait::async_trait;
 use sqlx::{Executor, Postgres, Transaction};
@@ -318,3 +319,4 @@ CREATE TABLE "invoice" (
         }
     }
 }
+*/

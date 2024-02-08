@@ -391,7 +391,7 @@ impl Verifier {
             }
             Err(
                 Error::SqlError(rusqlite::Error::QueryReturnedNoRows)
-                | Error::SqlxError(sqlx::Error::RowNotFound),
+                //| Error::SqlxError(sqlx::Error::RowNotFound),
             ) => {
                 // No users need verification.  Reset the interval to
                 // the next verification attempt.
