@@ -63,6 +63,22 @@ use tungstenite::handshake;
 use tungstenite::protocol::Message;
 use tungstenite::protocol::WebSocketConfig;
 
+// use macro_rules! <name of macro>{<Body>}
+macro_rules! returnRelayInfoResponse {
+    ($settings:expr) => {{
+        debug!("Responding to server info request");
+        let rinfo = RelayInfo::from($settings);
+        let b = Body::from(serde_json::to_string_pretty(&rinfo).unwrap());
+        return Ok(Response::builder()
+            .status(200)
+            .header("Content-Type", "application/json")
+            .header("Access-Control-Allow-Origin", "*")
+            .body(b)
+            .unwrap());
+    }}
+}
+
+
 /// Handle arbitrary HTTP requests, including for `WebSocket` upgrades.
 #[allow(clippy::too_many_arguments)]
 async fn handle_web_request(
@@ -161,6 +177,37 @@ async fn handle_web_request(
                 }
             };
             Ok::<_, Infallible>(response)
+        }
+        ("/relay-info", false) => {
+            // handle request at root with no upgrade header
+            // Check if this is a nostr server info request
+            let accept_header = &request.headers().get(ACCEPT);
+            // return relay info if Accept header is empy or likely a browser
+            match accept_header {
+                Some(media_types) => {
+                    if let Ok(mt_str) = media_types.to_str() {
+                        if mt_str.contains("application/json") || mt_str.contains("text/html") || mt_str.contains("text/plain") || mt_str.contains("application/xhtml+xml") {
+                            returnRelayInfoResponse!(settings);
+                        }
+                    }
+                },
+                None => returnRelayInfoResponse!(settings)
+            }
+
+            // Redirect users to join page when pay to relay enabled
+            if settings.pay_to_relay.enabled {
+                return Ok(Response::builder()
+                    .status(StatusCode::TEMPORARY_REDIRECT)
+                    .header("location", "/join")
+                    .body(Body::empty())
+                                        .unwrap());
+            }
+
+            Ok(Response::builder()
+                .status(200)
+                .header("Content-Type", "text/plain")
+                .body(Body::from("Please use a Nostr client to connect."))
+                .unwrap())
         }
         // Request for Relay info
         ("/", false) => {
