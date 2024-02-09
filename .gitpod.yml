@@ -8,7 +8,7 @@ tasks:
     - name: install deps for building and cross compiling, and then build using nightly for parallel threading
       before: |
         sudo apt-get --yes install protobuf-compiler gcc-aarch64-linux-gnu
-        rustup toolchain install nightly && rustup target --toolchain=nightly add aarch64-unknown-linux-gnu
+        rustup toolchain install nightly && rustup target add --toolchain=nightly aarch64-unknown-linux-gnu
       command: RUSTFLAGS="-Z threads=8" cargo +nightly build --release --target=aarch64-unknown-linux-gnu && echo $(date) >> .prebuild.log
 
 
