@@ -5,7 +5,9 @@
 # Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
 
 tasks:
-  - init: cargo build
-    command: cargo watch -x run
+    - name: install deps for building and cross compiling, and then build using nightly for parallel threading
+      before: sudo apt-get install protobuf-compiler gcc-aarch64-linux-gnu
+      init: rustup toolchain install nightly && rustup target add aarch64-unknown-linux-gnu
+      command: RUSTFLAGS="-Z threads=8"  cargo +nightly build --release --target=aarch64-unknown-linux-gnu && echo $(date) >> .prebuild.log
 
 
